@@ -18,6 +18,7 @@ app.listen(port, () => {
 })
 
 app.use(bodyParser.json({}))
+app.use(cors())
 
 const parseEnvList = (env) => {
     if (!env) {
