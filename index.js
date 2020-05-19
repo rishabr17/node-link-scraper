@@ -7,7 +7,8 @@ const bodyParser = require('body-parser')
 
 const app = express();
 
-const port = 8080;
+const port = process.env.PORT || 8080;
+
 
 app.listen(port, () => {
 
@@ -15,12 +16,21 @@ app.listen(port, () => {
 
 app.use(bodyParser.json({}))
 
+const parseEnvList = (env) => {
+    if (!env) {
+      return [];
+    }
+    return env.split(',');
+}
+
+
+const whitelist = parseEnvList(process.env.WHITELIST);
+
 const scrapeMetadata = (text) => {
 
     const urls = Array.from( getUrls(text) );
     const requests = urls.map(async url => {
         const res = await fetch(url);
-        console.log(url)
         const html = await res.text();
         const $ = cheerio.load(html);
         
@@ -59,7 +69,13 @@ const scrapeMetadata = (text) => {
 }
 
 exports.scraper = app.post('/', (request, response) => {
-    console.log(request.body)
+    var origin = request.headers.origin
+    if (whitelist.length && whitelist.indexOf(origin) === -1) {
+        response.writeHead(403, 'Forbidden');
+        response.end('The origin "' + origin + '" was not whitelisted by the operator of this proxy.');
+        return;
+    }
+    console.log(origin)
     cors(request, response, async () => {
         const data = await scrapeMetadata(request.body.text);
 
