@@ -55,6 +55,10 @@ const scrapeMetadata = (text) => {
         if(favicon != undefined && !validateUrl(favicon)){
             favicon = url + favicon
         }
+        var image = getMetatag('image');
+        if(image != undefined && !validateUrl(image)){
+            image = url + image
+        }
 
         return { 
             url,
@@ -62,7 +66,7 @@ const scrapeMetadata = (text) => {
             favicon: favicon,
             // description: $('meta[name=description]').attr('content'),
             description: getMetatag('description'),
-            image: getMetatag('image'),
+            image: image,
             author: getMetatag('author'),
         }
     });
