@@ -8,3 +8,12 @@
 - Clone repo and deploy server </br>
 - Scraper link must be supplied to <b>link-preview-js</b> component </br>
 - Can be added to an existing node server
+
+## Environment Variables
+- To prevent unauthorized usage, you can whitelist your site by setting the variable `WHITELIST` </br>
+- This server automatically runs on port 8080. If you are operating on a different port, set the variable `PORT`
+```
+SET WHITELIST=rishabr17.github.io
+SET PORT = 3000
+node index.js
+```
