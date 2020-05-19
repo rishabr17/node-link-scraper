@@ -26,7 +26,7 @@ var allowCrossDomain = function(req, res, next) {
 app.use(allowCrossDomain);
 
 app.get('/', function(req, res) {
-    res.send('<h1>node-simple-scraper</h1>')
+    res.send('<h1>node-link-scraper</h1>')
 });
 
 app.listen(port, () => {
@@ -42,7 +42,6 @@ const parseEnvList = (env) => {
     return env.split(',');
 }
 
-
 const whitelist = parseEnvList(process.env.WHITELIST);
 
 const scrapeMetadata = (text) => {
@@ -52,7 +51,7 @@ const scrapeMetadata = (text) => {
         const res = await fetch(url);
         const html = await res.text();
         const $ = cheerio.load(html);
-        
+        let baseUrl = new URL(url)
         const getMetatag = (name) =>  
             $(`meta[name="${name}"]`).attr('content') ||  
             $(`meta[property="og:${name}"]`).attr('content') ||  
@@ -69,11 +68,11 @@ const scrapeMetadata = (text) => {
 
         var favicon = getFavicon();
         if(favicon != undefined && !validateUrl(favicon)){
-            favicon = url + favicon
+            favicon = baseUrl.origin + favicon
         }
         var image = getMetatag('image');
         if(image != undefined && !validateUrl(image)){
-            image = url + image
+            image = baseUrl.origin + image
         }
 
         return { 
